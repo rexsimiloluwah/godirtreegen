@@ -10,7 +10,7 @@ steps:
     steps:
     - uses: actions/checkout@v2
     
-    # Build the docker imagw
+    # Build the docker image
     - name: Build the Docker image
       run: docker build . --tag godirgen:$(date +%s)
 

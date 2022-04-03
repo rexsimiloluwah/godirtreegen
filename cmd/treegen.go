@@ -28,6 +28,7 @@ type DirectoryTree struct {
 	ParentNode *DirectoryNode
 	Diagram    []string
 	Style      string
+	IgnoreDirs []string
 }
 
 type DirectoryTreeInterface interface {
@@ -35,12 +36,13 @@ type DirectoryTreeInterface interface {
 	GenerateTreeDiagramHead()
 	GenerateTreeDiagramBody(node *DirectoryNode, prefix string)
 	AddFile(c *DirectoryNode, connector string, prefix string)
-	AddFolder(c *DirectoryNode, connector string, prefix string, depth int, numEntries int)
+	AddFolderNested(c *DirectoryNode, connector string, prefix string, depth int, numEntries int)
+	AddFolder(c *DirectoryNode, connector string, prefix string)
 	DirectoryTreeDiagram() []string
 }
 
 // Initialize a new DirectoryTree struct/object
-func NewDirectoryTree(rootDir string, style string) DirectoryTreeInterface {
+func NewDirectoryTree(rootDir string, style string, ignoreDirs []string) DirectoryTreeInterface {
 	parentNode := &DirectoryNode{
 		Name:     rootDir,
 		Path:     rootDir,
@@ -50,6 +52,7 @@ func NewDirectoryTree(rootDir string, style string) DirectoryTreeInterface {
 		parentNode,
 		make([]string, 0),
 		style,
+		ignoreDirs,
 	}
 }
 
@@ -76,15 +79,28 @@ func (dt *DirectoryTree) GenerateTreeDiagramBody(node *DirectoryNode, prefix str
 			connector = ELBOW
 		}
 		if len(c.Children) != 0 {
-			dt.AddFolder(c, connector, prefix, idx, numEntries)
+			if !contains(dt.IgnoreDirs, c.Name) {
+				dt.AddFolderNested(c, connector, prefix, idx, numEntries)
+			} else {
+				dt.AddFolder(c, connector, prefix)
+			}
 		} else {
 			dt.AddFile(c, connector, prefix)
 		}
 	}
 }
 
-// Add a folder to the directory tree diagram
-func (dt *DirectoryTree) AddFolder(c *DirectoryNode, connector string, prefix string, depth int, numEntries int) {
+// Add only the folder to the directory tree diagram (useful for large or trivial folders)
+func (dt *DirectoryTree) AddFolder(c *DirectoryNode, connector string, prefix string) {
+	if dt.Style == "classic" {
+		dt.Diagram = append(dt.Diagram, fmt.Sprintf("%s%s 📂 %s", prefix, connector, c.Name))
+	} else {
+		dt.Diagram = append(dt.Diagram, fmt.Sprintf("%s%s %s", prefix, connector, c.Name))
+	}
+}
+
+// Add a folder and its nested children to the directory tree diagram
+func (dt *DirectoryTree) AddFolderNested(c *DirectoryNode, connector string, prefix string, depth int, numEntries int) {
 	if dt.Style == "classic" {
 		dt.Diagram = append(dt.Diagram, fmt.Sprintf("%s%s 📂 %s", prefix, connector, c.Name))
 	} else {
@@ -163,4 +179,14 @@ func processEntries(path string) []fs.FileInfo {
 	sortedEntries = append(sortedEntries, dirs...)
 	sortedEntries = append(sortedEntries, files...)
 	return sortedEntries
+}
+
+// Utility function to check if a slice contains an element
+func contains(slice []string, el string) bool {
+	for _, s := range slice {
+		if s == el {
+			return true
+		}
+	}
+	return false
 }

@@ -19,8 +19,10 @@ import (
 	"bufio"
 	"flag"
 	"fmt"
+	"io/ioutil"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/rexsimiloluwah/godirgen/cmd"
 )
@@ -28,15 +30,19 @@ import (
 func main() {
 	styleInput := flag.String("style", "plain", "Output Style {plain|classic}")
 	pathInput := flag.String("path", ".", "A valid path, default is the current working directory => .")
-	mdOut := flag.String("o", "", "Output markdown file for the generated file tree diagram.")
+	mdOut := flag.String("o", "", "Output filename for the generated file tree diagram i.e. filetree.md, filetree.docx etc.")
+	ignoreDirsInput := flag.String("ignore", "", "Comma separated list of folders to ignore when traversing.\n This could typically include large folders i.e. node_modules,.git etc.")
 	flag.Parse()
+
+	ignoreDirs := readFolderIgnore()
+	ignoreDirs = append(ignoreDirs, strings.Split(strings.Trim(*ignoreDirsInput, " "), ",")...)
 
 	if *styleInput != "plain" && *styleInput != "classic" {
 		fmt.Printf("Style %s is invalid.", *styleInput)
 		flag.PrintDefaults()
 		os.Exit(1)
 	} else {
-		dirTree := cmd.NewDirectoryTree(*pathInput, *styleInput)
+		dirTree := cmd.NewDirectoryTree(*pathInput, *styleInput, ignoreDirs)
 		dirTreeDiagram := dirTree.DirectoryTreeDiagram()
 		for _, d := range dirTreeDiagram {
 			fmt.Println(d)
@@ -63,4 +69,10 @@ func WriteToMd(fileName string, contents []string) {
 	}
 	fmt.Printf("\nYipee! Directory Tree Diagram successfully written to %s 🎉🎉\n", fileName)
 	w.Flush()
+}
+
+// Read the contents of .folderignore
+func readFolderIgnore() []string {
+	resp, _ := ioutil.ReadFile(".folderignore")
+	return strings.Split(strings.Trim(string(resp), " \n"), "\n")
 }

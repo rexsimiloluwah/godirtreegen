@@ -1,0 +1,23 @@
+name: Build and Publish GODIRGEN Docker image 
+
+on: 
+  push: 
+    branches: [ master ]
+
+steps: 
+  build-and-publish:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    
+    # Build the docker imagw
+    - name: Build the Docker image
+      run: docker build . --tag godirgen:$(date +%s)
+
+    ## Publishes the built image to DockerHub registry
+    - name: Publish to Registry
+      uses: elgohr/Publish-Docker-Github-Action@master
+      with:
+        name: similoluwaokunowo/godirgen
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}

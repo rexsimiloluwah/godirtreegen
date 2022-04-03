@@ -1,0 +1,8 @@
+node_modules
+build
+dist
+vendor
+env
+venv
+tox
+.git 

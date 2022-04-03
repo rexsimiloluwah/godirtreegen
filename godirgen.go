@@ -57,7 +57,8 @@ func main() {
 // Write the generated file tree diagram to a markdown file
 func WriteToMd(fileName string, contents []string) {
 	if _, err := os.Stat(fileName); os.IsNotExist(err) {
-		os.MkdirAll(filepath.Dir(fileName), 0700)
+		err = os.MkdirAll(filepath.Dir(fileName), 0700)
+		panic(err)
 	}
 	f, err := os.Create(fileName)
 	if err != nil {
@@ -65,7 +66,7 @@ func WriteToMd(fileName string, contents []string) {
 	}
 	w := bufio.NewWriter(f)
 	for _, c := range contents {
-		w.WriteString(c + "\n")
+		_, _ = w.WriteString(c + "\n")
 	}
 	fmt.Printf("\nYipee! Directory Tree Diagram successfully written to %s 🎉🎉\n", fileName)
 	w.Flush()

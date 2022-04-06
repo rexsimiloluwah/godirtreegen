@@ -32,6 +32,7 @@ func main() {
 	pathInput := flag.String("path", ".", "A valid path, default is the current working directory => .")
 	mdOut := flag.String("o", "", "Output filename for the generated file tree diagram i.e. filetree.md, filetree.docx etc.")
 	ignoreDirsInput := flag.String("ignore", "", "Comma separated list of folders to ignore when traversing.\n This could typically include large folders i.e. node_modules,.git etc.")
+	showFileSize := flag.Bool("size", false, "Display file size")
 	flag.Parse()
 
 	ignoreDirs := readFolderIgnore()
@@ -42,7 +43,7 @@ func main() {
 		flag.PrintDefaults()
 		os.Exit(1)
 	} else {
-		dirTree := cmd.NewDirectoryTree(*pathInput, *styleInput, ignoreDirs)
+		dirTree := cmd.NewDirectoryTree(*pathInput, *styleInput, ignoreDirs, *showFileSize)
 		dirTreeDiagram := dirTree.DirectoryTreeDiagram()
 		for _, d := range dirTreeDiagram {
 			fmt.Println(d)
@@ -58,7 +59,9 @@ func main() {
 func WriteToMd(fileName string, contents []string) {
 	if _, err := os.Stat(fileName); os.IsNotExist(err) {
 		err = os.MkdirAll(filepath.Dir(fileName), 0700)
-		panic(err)
+		if err != nil {
+			panic(err)
+		}
 	}
 	f, err := os.Create(fileName)
 	if err != nil {

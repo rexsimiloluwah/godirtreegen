@@ -20,15 +20,17 @@ var SPACE_PREFIX string = strings.Repeat(" ", 4)
 type DirectoryNode struct {
 	Name     string
 	Path     string
+	Size     float64
 	Children []*DirectoryNode
 }
 
 // Directory Tree
 type DirectoryTree struct {
-	ParentNode *DirectoryNode
-	Diagram    []string
-	Style      string
-	IgnoreDirs []string
+	ParentNode   *DirectoryNode
+	Diagram      []string
+	Style        string
+	IgnoreDirs   []string
+	ShowFileSize bool
 }
 
 type DirectoryTreeInterface interface {
@@ -42,7 +44,7 @@ type DirectoryTreeInterface interface {
 }
 
 // Initialize a new DirectoryTree struct/object
-func NewDirectoryTree(rootDir string, style string, ignoreDirs []string) DirectoryTreeInterface {
+func NewDirectoryTree(rootDir string, style string, ignoreDirs []string, showFileSize bool) DirectoryTreeInterface {
 	parentNode := &DirectoryNode{
 		Name:     rootDir,
 		Path:     rootDir,
@@ -53,6 +55,7 @@ func NewDirectoryTree(rootDir string, style string, ignoreDirs []string) Directo
 		make([]string, 0),
 		style,
 		ignoreDirs,
+		showFileSize,
 	}
 }
 
@@ -118,9 +121,17 @@ func (dt *DirectoryTree) AddFolderNested(c *DirectoryNode, connector string, pre
 // Add a file to the directory tree diagram
 func (dt *DirectoryTree) AddFile(c *DirectoryNode, connector string, prefix string) {
 	if dt.Style == "classic" {
-		dt.Diagram = append(dt.Diagram, fmt.Sprintf("%s%s 📜 %s", prefix, connector, c.Name))
+		s := fmt.Sprintf("%s%s 📜 %s", prefix, connector, c.Name)
+		if dt.ShowFileSize {
+			s += fmt.Sprintf("  (%s)", convertBytes(c.Size))
+		}
+		dt.Diagram = append(dt.Diagram, s)
 	} else {
-		dt.Diagram = append(dt.Diagram, fmt.Sprintf("%s%s %s", prefix, connector, c.Name))
+		s := fmt.Sprintf("%s%s %s", prefix, connector, c.Name)
+		if dt.ShowFileSize {
+			s += fmt.Sprintf("  (%s)", convertBytes(c.Size))
+		}
+		dt.Diagram = append(dt.Diagram, s)
 	}
 }
 
@@ -148,6 +159,7 @@ func processNode(node *DirectoryNode) {
 	for _, entry := range entries {
 		newDirectoryNode := &DirectoryNode{
 			Name: entry.Name(),
+			Size: float64(entry.Size()),
 			Path: filepath.Join(node.Path, entry.Name()),
 		}
 		if isDir, _ := isDirectory(newDirectoryNode.Path); isDir {
@@ -189,4 +201,15 @@ func contains(slice []string, el string) bool {
 		}
 	}
 	return false
+}
+
+// Utility function to convert file size (bytes) to human readable format
+func convertBytes(size float64) string {
+	units := []string{"B", "KB", "MB", "GB", "PB", "TB"}
+	idx := 0
+	for size > 1000 {
+		size = size / 1024
+		idx++
+	}
+	return fmt.Sprintf("%.2f%s", size, units[idx])
 }

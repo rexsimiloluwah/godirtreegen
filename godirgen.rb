@@ -5,11 +5,11 @@
 class Godirgen < Formula
   desc ""
   homepage "https://github.com/rexsimiloluwah/godirgen"
-  version "0.1.2"
+  version "0.1.3"
 
   on_macos do
-    url "https://github.com/rexsimiloluwah/godirgen/releases/download/v0.1.2/godirgen_0.1.2_darwin_all.tar.gz"
-    sha256 "09a45d7bf9eaf0a979f4d83980984e5929a50c499cc22116a7bcf1a327ceb68c"
+    url "https://github.com/rexsimiloluwah/godirgen/releases/download/v0.1.3/godirgen_0.1.3_darwin_all.tar.gz"
+    sha256 "b3d89e2f61f1cbd80d338f725b3874f4c9d900262bcd915f53b79bf10b57c183"
 
     def install
       bin.install "godirgen"
@@ -18,16 +18,16 @@ class Godirgen < Formula
 
   on_linux do
     if Hardware::CPU.intel?
-      url "https://github.com/rexsimiloluwah/godirgen/releases/download/v0.1.2/godirgen_0.1.2_linux_amd64.tar.gz"
-      sha256 "783f76da4e121984e7563a4c916cd2bc2651dd238fefe99f60c1bac88be99f37"
+      url "https://github.com/rexsimiloluwah/godirgen/releases/download/v0.1.3/godirgen_0.1.3_linux_amd64.tar.gz"
+      sha256 "5bdd86d477a14427ce2806e55d9271ea999289553eff7fe5a48d73e09f379f97"
 
       def install
         bin.install "godirgen"
       end
     end
     if Hardware::CPU.arm? && Hardware::CPU.is_64_bit?
-      url "https://github.com/rexsimiloluwah/godirgen/releases/download/v0.1.2/godirgen_0.1.2_linux_arm64.tar.gz"
-      sha256 "66ecae0999dd57eff17eda4a69b5d88120de9f9a443ea7c3187125460b14a46d"
+      url "https://github.com/rexsimiloluwah/godirgen/releases/download/v0.1.3/godirgen_0.1.3_linux_arm64.tar.gz"
+      sha256 "b57647fbbbbbc80a7b8f948d8d8354827ea23a6fd03df51343cc50de6d9b1811"
 
       def install
         bin.install "godirgen"

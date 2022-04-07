@@ -1,3 +1,3 @@
-module github.com/rexsimiloluwah/godirgen
+module github.com/rexsimiloluwah/godirtreegen
 
 go 1.17

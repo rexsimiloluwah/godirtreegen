@@ -24,7 +24,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/rexsimiloluwah/godirgen/cmd"
+	"github.com/rexsimiloluwah/godirtreegen/cmd"
 )
 
 func main() {

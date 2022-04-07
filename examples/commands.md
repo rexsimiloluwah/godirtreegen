@@ -124,4 +124,13 @@ $ godirtreegen --size
 $ godirtreegen -o <path/to/file>
 ```
 
+7. Ignore specific sub-folders (this typically includes folders with many trivial files i.e. node_modules, .git etc, the [.folderignore](../.folderignore) file contains the folders excluded by default). Hence, those folders will not be further traversed in the directory tree diagram. 
+```bash
+# to add other folders to ignore (using the -ignore command with comma seperated folder names)
+$ godirtreegen -ignore  <folder1>,<folder2>
+# <folder1> and <folder2> will be ignored in the generated directory tree diagram
+```
+   
+
+
 Enjoy 🎉🎉

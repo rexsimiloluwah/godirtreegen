@@ -5,11 +5,11 @@
 class Godirtreegen < Formula
   desc ""
   homepage "https://github.com/rexsimiloluwah/godirtreegen"
-  version "0.1.6"
+  version "0.1.7"
 
   on_macos do
-    url "https://github.com/rexsimiloluwah/godirtreegen/releases/download/v0.1.6/godirtreegen_0.1.6_darwin_all.tar.gz"
-    sha256 "60c43f5a073b57c6caac5159a94cbb1b2e23e5abceb5dd0264a5b34156e0e954"
+    url "https://github.com/rexsimiloluwah/godirtreegen/releases/download/v0.1.7/godirtreegen_0.1.7_darwin_all.tar.gz"
+    sha256 "a49db9b01a8e876ad2e1c0383ca85e71a5ac55015da18202a97eb3a9c901c080"
 
     def install
       bin.install "godirtreegen"
@@ -17,25 +17,25 @@ class Godirtreegen < Formula
   end
 
   on_linux do
-    if Hardware::CPU.intel?
-      url "https://github.com/rexsimiloluwah/godirtreegen/releases/download/v0.1.6/godirtreegen_0.1.6_linux_amd64.tar.gz"
-      sha256 "93930608d7dc3b6bde01f9fd7954c6387e1fcf9139ecf336cc19be49f7b2626a"
+    if Hardware::CPU.arm? && Hardware::CPU.is_64_bit?
+      url "https://github.com/rexsimiloluwah/godirtreegen/releases/download/v0.1.7/godirtreegen_0.1.7_linux_arm64.tar.gz"
+      sha256 "9d4103431aff59b0d6fb78b3cae11a13f4e435d612dc7aa51ab18386f20ee92e"
 
       def install
         bin.install "godirtreegen"
       end
     end
-    if Hardware::CPU.arm? && Hardware::CPU.is_64_bit?
-      url "https://github.com/rexsimiloluwah/godirtreegen/releases/download/v0.1.6/godirtreegen_0.1.6_linux_arm64.tar.gz"
-      sha256 "26c29d266dd723062f3322d882e9a708b65cc9115560adb60a8412d0b4ffeac8"
+    if Hardware::CPU.intel?
+      url "https://github.com/rexsimiloluwah/godirtreegen/releases/download/v0.1.7/godirtreegen_0.1.7_linux_amd64.tar.gz"
+      sha256 "27627d5a174fbdb28e8a24995485cf79f519f7ec8647dcf3b8b3341b77803d24"
 
       def install
         bin.install "godirtreegen"
       end
     end
     if Hardware::CPU.arm? && !Hardware::CPU.is_64_bit?
-      url "https://github.com/rexsimiloluwah/godirtreegen/releases/download/v0.1.6/godirtreegen_0.1.6_linux_armv6.tar.gz"
-      sha256 "11c91d1454163f42093ade6d4c6b52791012198727cba4855afc7785a50ee93a"
+      url "https://github.com/rexsimiloluwah/godirtreegen/releases/download/v0.1.7/godirtreegen_0.1.7_linux_armv6.tar.gz"
+      sha256 "feab49defe21c4e1bc5676e63998cbf57459871df488b50557eac77d507ca52e"
 
       def install
         bin.install "godirtreegen"

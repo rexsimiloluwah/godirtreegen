@@ -20,6 +20,11 @@ You can easily download the pre-compiled binaries for your Linux, Windows, FreeB
 $ go install github.com/rexsimiloluwah/godirtreegen@latest
 ```
 
+### Install via docker 
+```bash
+$ docker pull similoluwaokunowo/godirtreegen@latest 
+```
+
 ### Compile from source 
 1. Clone the repository 
 ```bash
@@ -27,15 +32,9 @@ $ git clone https://github.com/rexsimiloluwah/godirtreegen
 $ cd godirtreegen 
 ```
 
-### Install via docker 
-```bash
-$ docker pull similoluwaokunowo/godirtreegen@latest 
-```
-
 2. Install using make 
 ```bash
-$ chmod +x ./scripts/install.sh 
-$ ./scripts/install.sh 
+$ make install
 ```
 
 ## Usage 

@@ -13,7 +13,7 @@ It recursively traverses through all sub-directories and files under the directo
 
 ## Installation 
 ### Install by downloading pre-compiled binaries 
-You can easily download the pre-compiled binaries for your Linux, Windows, FreeBSD, or MAC systems from the [releases](https://github.com/rexsimiloluwah/godirtreegen/releases) section. 
+You can easily download the pre-compiled binaries for your Linux, Windows, FreeBSD, or MAC OS from the [releases](https://github.com/rexsimiloluwah/godirtreegen/releases) section. 
 
 ### Installing globally using Go 
 ```bash 

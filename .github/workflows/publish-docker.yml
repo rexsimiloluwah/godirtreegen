@@ -12,7 +12,7 @@ jobs:
     
     # Build the docker image
     - name: Build the Docker image
-      run: docker build . --tag godirgen:$(date +%s)
+      run: docker build . --tag godirtreegen:$(date +%s)
 
     ## Publishes the built image to DockerHub registry
     - name: Publish to Registry

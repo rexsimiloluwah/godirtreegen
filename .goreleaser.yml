@@ -1,5 +1,5 @@
 builds:
-  - binary: godirgen
+  - binary: godirtreegen
     goos:
       - darwin
       - linux
@@ -22,11 +22,11 @@ universal_binaries:
 
 brews:
   -
-    name: godirgen
-    homepage: "https://github.com/rexsimiloluwah/godirgen"
+    name: godirtreegen
+    homepage: "https://github.com/rexsimiloluwah/godirtreegen"
     tap:
       owner: rexsimiloluwah
-      name: godirgen
+      name: godirtreegen
     commit_author:
       name: rexsimiloluwah
       email: rexsimiloluwa@gmail.com

@@ -17,41 +17,70 @@ var PIPE_PREFIX string = "│   "
 var SPACE_PREFIX string = strings.Repeat(" ", 4)
 
 // Directory Tree Node
-type DirectoryNode struct {
+type DirNode struct {
 	Name     string
 	Path     string
 	Size     float64
-	Children []*DirectoryNode
+	Children []*DirNode
 }
 
 // Directory Tree
-type DirectoryTree struct {
-	ParentNode   *DirectoryNode
+type DirTree struct {
+	ParentNode *DirNode
+	// Diagram      []string
+	// Style        string
+	// IgnoreDirs   []string
+	// ShowFileSize bool
+}
+
+// Directory Tree Printer
+type DirTreePrinter struct {
+	Tree         *DirTree
 	Diagram      []string
 	Style        string
 	IgnoreDirs   []string
 	ShowFileSize bool
 }
 
-type DirectoryTreeInterface interface {
+type DirTreeInterface interface {
 	BuildTree()
+	// 	GenerateTreeDiagramHead()
+	// 	GenerateTreeDiagramBody(node *DirectoryNode, prefix string)
+	// AddFile(c *DirectoryNode, connector string, prefix string)
+	// AddFolderNested(c *DirectoryNode, connector string, prefix string, depth int, numEntries int)
+	// 	AddFolder(c *DirectoryNode, connector string, prefix string)
+	// 	DirectoryTreeDiagram() []string
+}
+
+type DirTreePrinterInterface interface {
 	GenerateTreeDiagramHead()
-	GenerateTreeDiagramBody(node *DirectoryNode, prefix string)
-	AddFile(c *DirectoryNode, connector string, prefix string)
-	AddFolderNested(c *DirectoryNode, connector string, prefix string, depth int, numEntries int)
-	AddFolder(c *DirectoryNode, connector string, prefix string)
-	DirectoryTreeDiagram() []string
+	GenerateTreeDiagramBody(node *DirNode, prefix string)
+	AddFile(c *DirNode, connector string, prefic string)
+	AddFolderNested(c *DirNode, connector string, prefix string, depth int, numEntries int)
+	AddFolder(c *DirNode, connector string, prefix string)
+	GenerateDirTreeDiagram() []string
 }
 
 // Initialize a new DirectoryTree struct/object
-func NewDirectoryTree(rootDir string, style string, ignoreDirs []string, showFileSize bool) DirectoryTreeInterface {
-	parentNode := &DirectoryNode{
+func NewDirectoryTree(rootDir string) *DirTree {
+	parentNode := &DirNode{
 		Name:     rootDir,
 		Path:     rootDir,
-		Children: make([]*DirectoryNode, 0),
+		Children: make([]*DirNode, 0),
 	}
-	return &DirectoryTree{
+	return &DirTree{
 		parentNode,
+		// make([]string, 0),
+		// style,
+		// ignoreDirs,
+		// showFileSize,
+	}
+}
+
+// Initialize a new DirectoryTreePrinter struct/object
+func NewDirectoryTreePrinter(tree *DirTree, style string, ignoreDirs []string, showFileSize bool) DirTreePrinterInterface {
+	return &DirTreePrinter{
+		tree,
 		make([]string, 0),
 		style,
 		ignoreDirs,
@@ -60,19 +89,19 @@ func NewDirectoryTree(rootDir string, style string, ignoreDirs []string, showFil
 }
 
 // Build the tree from the parent directory node
-func (dt *DirectoryTree) BuildTree() {
+func (dt *DirTree) BuildTree() {
 	processNode(dt.ParentNode)
 }
 
 // Some of the logic for generating the file tree diagram was gleaned from a blog post by RealPython
 // Credits: https://realpython.com/directory-tree-generator-python/
-func (dt *DirectoryTree) GenerateTreeDiagramHead() {
-	head := []string{dt.ParentNode.Name + "/", PIPE}
-	dt.Diagram = append(dt.Diagram, head...)
+func (p *DirTreePrinter) GenerateTreeDiagramHead() {
+	head := []string{p.Tree.ParentNode.Name + "/", PIPE}
+	p.Diagram = append(p.Diagram, head...)
 }
 
-// Generate the body of the directory tree diagram
-func (dt *DirectoryTree) GenerateTreeDiagramBody(node *DirectoryNode, prefix string) {
+// // Generate the body of the directory tree diagram
+func (p *DirTreePrinter) GenerateTreeDiagramBody(node *DirNode, prefix string) {
 	var connector string
 	numEntries := len(node.Children)
 	for idx, c := range node.Children {
@@ -82,65 +111,82 @@ func (dt *DirectoryTree) GenerateTreeDiagramBody(node *DirectoryNode, prefix str
 			connector = ELBOW
 		}
 		if len(c.Children) != 0 {
-			if !contains(dt.IgnoreDirs, c.Name) {
-				dt.AddFolderNested(c, connector, prefix, idx, numEntries)
+			if !contains(p.IgnoreDirs, c.Name) {
+				p.AddFolderNested(c, connector, prefix, idx, numEntries)
 			} else {
-				dt.AddFolder(c, connector, prefix)
+				p.AddFolder(c, connector, prefix)
 			}
 		} else {
-			dt.AddFile(c, connector, prefix)
+			p.AddFile(c, connector, prefix)
 		}
 	}
 }
 
-// Add only the folder to the directory tree diagram (useful for large or trivial folders)
-func (dt *DirectoryTree) AddFolder(c *DirectoryNode, connector string, prefix string) {
-	if dt.Style == "classic" {
-		dt.Diagram = append(dt.Diagram, fmt.Sprintf("%s%s 📂 %s", prefix, connector, c.Name))
+// // Add only the folder to the directory tree diagram (useful for large or trivial folders)
+func (p *DirTreePrinter) AddFolder(c *DirNode, connector string, prefix string) {
+	if p.Style == "classic" {
+		p.Diagram = append(p.Diagram, fmt.Sprintf("%s%s 📂 %s", prefix, connector, c.Name))
 	} else {
-		dt.Diagram = append(dt.Diagram, fmt.Sprintf("%s%s %s", prefix, connector, c.Name))
+		p.Diagram = append(p.Diagram, fmt.Sprintf("%s%s %s", prefix, connector, c.Name))
 	}
 }
 
-// Add a folder and its nested children to the directory tree diagram
-func (dt *DirectoryTree) AddFolderNested(c *DirectoryNode, connector string, prefix string, depth int, numEntries int) {
-	if dt.Style == "classic" {
-		dt.Diagram = append(dt.Diagram, fmt.Sprintf("%s%s 📂 %s", prefix, connector, c.Name))
+// // Add a folder and its nested children to the directory tree diagram
+func (p *DirTreePrinter) AddFolderNested(c *DirNode, connector string, prefix string, depth int, numEntries int) {
+	if p.Style == "classic" {
+		p.Diagram = append(p.Diagram, fmt.Sprintf("%s%s 📂 %s", prefix, connector, c.Name))
 	} else {
-		dt.Diagram = append(dt.Diagram, fmt.Sprintf("%s%s %s", prefix, connector, c.Name))
+		p.Diagram = append(p.Diagram, fmt.Sprintf("%s%s %s", prefix, connector, c.Name))
 	}
 	if depth != numEntries-1 {
 		prefix += PIPE_PREFIX
 	} else {
 		prefix += SPACE_PREFIX
 	}
-	dt.GenerateTreeDiagramBody(c, prefix)
-	dt.Diagram = append(dt.Diagram, PIPE)
+	p.GenerateTreeDiagramBody(c, prefix)
+	p.Diagram = append(p.Diagram, PIPE)
 }
 
-// Add a file to the directory tree diagram
-func (dt *DirectoryTree) AddFile(c *DirectoryNode, connector string, prefix string) {
-	if dt.Style == "classic" {
+// // Add a file to the directory tree diagram
+func (p *DirTreePrinter) AddFile(c *DirNode, connector string, prefix string) {
+	if p.Style == "classic" {
 		s := fmt.Sprintf("%s%s 📜 %s", prefix, connector, c.Name)
-		if dt.ShowFileSize {
+		if p.ShowFileSize {
 			s += fmt.Sprintf("  (%s)", convertBytes(c.Size))
 		}
-		dt.Diagram = append(dt.Diagram, s)
+		p.Diagram = append(p.Diagram, s)
 	} else {
 		s := fmt.Sprintf("%s%s %s", prefix, connector, c.Name)
-		if dt.ShowFileSize {
+		if p.ShowFileSize {
 			s += fmt.Sprintf("  (%s)", convertBytes(c.Size))
 		}
-		dt.Diagram = append(dt.Diagram, s)
+		p.Diagram = append(p.Diagram, s)
 	}
 }
 
+// Return the directory tree diagram elements
+func (p *DirTreePrinter) GenerateDirTreeDiagram() []string {
+	return p.Diagram
+}
+
 // Returns a slice containing the directory tree diagram
-func (dt *DirectoryTree) DirectoryTreeDiagram() []string {
-	dt.GenerateTreeDiagramHead()
-	dt.BuildTree()
-	dt.GenerateTreeDiagramBody(dt.ParentNode, "")
-	return dt.Diagram
+func DirectoryTreeDiagram(path string, style string, ignoreDirs []string, showFileSize bool) []string {
+	// Initialize a new directory tree
+	dirTree := NewDirectoryTree(path)
+	// Traverse the sub-directories and files and build the tree
+	dirTree.BuildTree()
+	// Initialize a new directory tree printer
+	dirTreePrinter := NewDirectoryTreePrinter(
+		dirTree,
+		style,
+		ignoreDirs,
+		showFileSize,
+	)
+	dirTreePrinter.GenerateTreeDiagramHead()
+	dirTreePrinter.GenerateTreeDiagramBody(dirTree.ParentNode, "")
+	// Return the directory tree diagram
+	diagram := dirTreePrinter.GenerateDirTreeDiagram()
+	return diagram
 }
 
 // Check if a given path is folder/directory or file
@@ -154,10 +200,10 @@ func isDirectory(path string) (bool, error) {
 }
 
 // Recursively traverse a given node in the file directory tree
-func processNode(node *DirectoryNode) {
+func processNode(node *DirNode) {
 	entries := processEntries(node.Path)
 	for _, entry := range entries {
-		newDirectoryNode := &DirectoryNode{
+		newDirectoryNode := &DirNode{
 			Name: entry.Name(),
 			Size: float64(entry.Size()),
 			Path: filepath.Join(node.Path, entry.Name()),

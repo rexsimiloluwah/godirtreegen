@@ -16,26 +16,27 @@ limitations under the License.
 package main
 
 import (
-	"bufio"
 	"flag"
 	"fmt"
-	"io/ioutil"
 	"os"
-	"path/filepath"
 	"strings"
 
 	"github.com/rexsimiloluwah/godirtreegen/cmd"
+	"github.com/rexsimiloluwah/godirtreegen/utils"
 )
 
 func main() {
+	// Reading the command line arguments
 	styleInput := flag.String("style", "plain", "Output Style {plain|classic}")
 	pathInput := flag.String("path", ".", "A valid path, default is the current working directory => .")
 	mdOut := flag.String("o", "", "Output filename for the generated file tree diagram i.e. filetree.md, filetree.docx etc.")
 	ignoreDirsInput := flag.String("ignore", "", "Comma separated list of folders to ignore when traversing.\n This could typically include large folders i.e. node_modules,.git etc.")
 	showFileSize := flag.Bool("size", false, "Display file size")
+	// Parsing the command line arguments
 	flag.Parse()
 
-	ignoreDirs := readFolderIgnore()
+	// Reading the default folders to ignore (from .folderignore)
+	ignoreDirs := utils.ReadFolderIgnore(".folderignore")
 	ignoreDirs = append(ignoreDirs, strings.Split(strings.Trim(*ignoreDirsInput, " "), ",")...)
 
 	if *styleInput != "plain" && *styleInput != "classic" {
@@ -43,40 +44,12 @@ func main() {
 		flag.PrintDefaults()
 		os.Exit(1)
 	} else {
-		dirTree := cmd.NewDirectoryTree(*pathInput, *styleInput, ignoreDirs, *showFileSize)
-		dirTreeDiagram := dirTree.DirectoryTreeDiagram()
+		dirTreeDiagram := cmd.DirectoryTreeDiagram(*pathInput, *styleInput, ignoreDirs, *showFileSize)
 		for _, d := range dirTreeDiagram {
 			fmt.Println(d)
 		}
 		if *mdOut != "" {
-			WriteToMd(*mdOut, dirTreeDiagram)
+			utils.WriteToMd(*mdOut, dirTreeDiagram)
 		}
 	}
-
-}
-
-// Write the generated file tree diagram to a markdown file
-func WriteToMd(fileName string, contents []string) {
-	if _, err := os.Stat(fileName); os.IsNotExist(err) {
-		err = os.MkdirAll(filepath.Dir(fileName), 0700)
-		if err != nil {
-			panic(err)
-		}
-	}
-	f, err := os.Create(fileName)
-	if err != nil {
-		panic(err)
-	}
-	w := bufio.NewWriter(f)
-	for _, c := range contents {
-		_, _ = w.WriteString(c + "\n")
-	}
-	fmt.Printf("\nYipee! Directory Tree Diagram successfully written to %s 🎉🎉\n", fileName)
-	w.Flush()
-}
-
-// Read the contents of .folderignore
-func readFolderIgnore() []string {
-	resp, _ := ioutil.ReadFile(".folderignore")
-	return strings.Split(strings.Trim(string(resp), " \n"), "\n")
 }

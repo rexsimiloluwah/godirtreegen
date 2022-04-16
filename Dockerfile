@@ -5,8 +5,9 @@ WORKDIR /app
 ARG MOUNT_DIR=/host
 RUN mkdir -p ${MOUNT_DIR}}
 
-RUN mkdir -p cmd 
+RUN mkdir -p cmd utils
 COPY cmd/treegen.go cmd
+COPY utils/utils.go utils
 COPY run.sh main.go .folderignore go.mod go.sum /app/ 
 
 RUN ls -la

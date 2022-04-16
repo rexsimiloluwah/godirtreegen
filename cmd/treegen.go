@@ -27,10 +27,6 @@ type DirNode struct {
 // Directory Tree
 type DirTree struct {
 	ParentNode *DirNode
-	// Diagram      []string
-	// Style        string
-	// IgnoreDirs   []string
-	// ShowFileSize bool
 }
 
 // Directory Tree Printer
@@ -44,12 +40,6 @@ type DirTreePrinter struct {
 
 type DirTreeInterface interface {
 	BuildTree()
-	// 	GenerateTreeDiagramHead()
-	// 	GenerateTreeDiagramBody(node *DirectoryNode, prefix string)
-	// AddFile(c *DirectoryNode, connector string, prefix string)
-	// AddFolderNested(c *DirectoryNode, connector string, prefix string, depth int, numEntries int)
-	// 	AddFolder(c *DirectoryNode, connector string, prefix string)
-	// 	DirectoryTreeDiagram() []string
 }
 
 type DirTreePrinterInterface interface {
@@ -70,10 +60,6 @@ func NewDirectoryTree(rootDir string) *DirTree {
 	}
 	return &DirTree{
 		parentNode,
-		// make([]string, 0),
-		// style,
-		// ignoreDirs,
-		// showFileSize,
 	}
 }
 

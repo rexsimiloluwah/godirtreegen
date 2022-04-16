@@ -55,4 +55,9 @@ Usage of godirtreegen:
 
 [View Examples Commands](./examples/commands.md)
 
+## License 
+[DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE](./LICENSE)
+
+## Contribution 
+I don't plan to maintain or extend this, however any contribution to improve this will be appreciated :).
 

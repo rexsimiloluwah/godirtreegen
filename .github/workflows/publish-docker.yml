@@ -16,7 +16,7 @@ jobs:
 
     ## Publishes the built image to DockerHub registry
     - name: Publish to Registry
-      uses: elgohr/Publish-Docker-Github-Action@master
+      uses: elgohr/Publish-Docker-Github-Action@v5
       with:
         name: similoluwaokunowo/godirtreegen
         username: ${{ secrets.DOCKER_USERNAME }}
